@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<input id="image-input" type="file" />
+
+<div id="result-container">
+  <div>
+    <h4>
+	No predictions yet
+    </h4>
+  </div>
+</div>
+
+<script>
+var apiURL = 'https://hf.space/embed/suvash/food-101-resnet50/+/api/predict/';
+
+var input = document.getElementById('image-input');
+var result = document.getElementById('result-container');
+
+input.onchange = function() {
+  const reader = new FileReader();
+  reader.onloadend = function() {
+    var b64 = reader.result;
+    fetch_gradio_response(b64)
+      .then(format_response_predictions);
+  };
+
+  const file = input.files[0];
+  reader.readAsDataURL(file);
+};
+
+const fetch_gradio_response = function(img64) {
+  return fetch(apiURL, {
+    method: "POST",
+    body: JSON.stringify({
+      "data": [img64]
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(function(response) {
+    return response.json();
+  })
+};
+
+const format_response_predictions = function(json_response) {
+
+  const resultDiv = document.createElement('div');
+  resultDiv.setAttribute('id', 'response-result');
+
+  json_response.data.forEach(function(d) {
+    const predictedText = `Predicted label : ${d.label}`
+
+    const predictedLabelNode = document.createElement('h4');
+    predictedLabelNode.textContent = predictedText;
+    resultDiv.appendChild(predictedLabelNode);
+
+    const confidencesUL = document.createElement('ul');
+
+    d.confidences.forEach(function(c) {
+      confidenceText = `${c.label}: ${c.confidence*100}%`
+
+      var confidenceLI = document.createElement('li');
+      confidenceLI.textContent = confidenceText;
+      confidencesUL.appendChild(confidenceLI);
+    });
+
+    resultDiv.appendChild(confidencesUL);
+  });
+  result.replaceChild(resultDiv, result.firstElementChild);
+};
+</script>
+
+</body>
+</html>
