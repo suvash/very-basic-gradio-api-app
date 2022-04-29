@@ -2,10 +2,25 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title></title>
+	<title>Food Image Classifier</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+
+<h1>Food Image Classifier</h1>
+<h3>Simple HTML+JS app that classifies food images</h3>
+
+<p>
+The inference backend is running on <a href="https://huggingface.co/spaces/suvash/food-101-resnet50">a HuggingFace Space</a>. This is a static web page that fetches the responses from the HF+Gradio API.
+<br/>
+No error handling etc., use the browser inspector instead !
+</p>
+
+<p>
+<h4> Please select an image on your device below. The inference happens automatically after a file selection</h4>
+</p>
+
+<br/>
 
 <input id="image-input" type="file" />
 
